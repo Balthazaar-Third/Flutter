@@ -1,0 +1,244 @@
+Ex-1:
+
+import re
+text="'deepanrajjacob2004@gmail.com 6369520070 10/07/2004'"
+email=r'[a-zA-Z0-9]+@[a-z].[a-z]{2,3}'
+te=re.findall(email,text)
+for word in te:
+print(word)
+print("valid")
+number=r'\d{10}'
+tx=re.findall(number,text)
+for word in tx:
+print(word)
+print("valid")
+date=r'\d{2}[-/]\d{2}[-/]\d{4}'
+tt=re.findall(date,text)
+for word in tt:
+print(word)
+print("valid")
+
+Ex-2:
+
+import nltk
+from nltk.tokenize import word_tokenize
+raw_test = "Welcome to DAC TEC and always employ professoinals"
+tokens = word_tokenize(raw_test)
+print("Tokenized with NLTK:", tokens)
+			(OR)
+import string
+def tokenize(text):
+m=str.maketrans('','',string.punctuation)
+words=text.translate(m).split()
+return words
+a="Welcome to DAC TEC and always employ professoinals"
+tokenize=tokenize(a)
+print(tokenize)
+
+Ex-3:
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+def remove_stop_words(text):
+words = word_tokenize(text)
+stop_words = set(stopwords.words('english'))
+filtered_words = [word for word in words if word.lower() not in stop_words]
+return " ".join(filtered_words)
+text = "Once upon a time there lived a ghost, he is not a myth anymore."
+cleaned_text = remove_stop_words(text)
+print("Original Text:", text)
+print("Cleaned Text:", cleaned_text)
+
+Ex-4:
+
+import nltk
+from nltk.stem import PorterStemmer
+from nltk.tokenize import word_tokenize
+stemmer=PorterStemmer()
+text="Running jumping climbing cutting"
+words=word_tokenize(text)
+stemmed_words=[stemmer.stem(word) for word in words]
+print("Original text:",words)
+print("Stemmed text:",stemmed_words)
+
+Ex-5:
+
+import nltk
+from nltk.util import ngrams
+from nltk.tokenize import word_tokenize
+text="KGF is the best among indian movies"
+words=word_tokenize(text)
+n=2
+n_grams=list(ngrams(words,n))
+print(n_grams)
+			(AND)
+import nltk
+from nltk.util import ngrams
+from nltk.tokenize import sent_tokenize
+text="I love to eat Pizza. I am crazy over KGF. I miss my school friends."
+words=sent_tokenize(text)
+n=2
+result=ngrams(words,n)
+for i in result:
+print(i)
+
+Ex-6:
+
+from collections import Counter
+import nltk
+from nltk.util import ngrams
+a = "Hello everyone How are you"
+token = nltk.word_tokenize(a.lower())
+bi = list(ngrams(token, 2))
+bi_c = Counter(bi)
+ui_c = Counter(token)
+v = len(set(token))
+def laplace_smoothing(bi, k=1):
+return (bi_c[bi] + k) / (ui_c[bi[0]] +v)
+for bigram in bi_c:
+print(f"Bigram: {bigram}, Laplace smoothed probability: {laplace_smoothing(bigram):.4f}")
+
+Ex-7:
+
+import nltk
+sentence=input("Enter the sentence:")
+sent=nltk.word_tokenize(sentence)
+pos=nltk.pos_tag(sent)
+print(pos)
+
+Ex-8:
+
+import nltk
+text = "The cat sat on the mat"
+tok = nltk.word_tokenize(text)
+pos = nltk.pos_tag(tok)
+c_gram = r"""
+NP: {<DT>?<JJ>*<NN>}
+VP: {<VB.*>+<NP|PP>*}
+PP: {<IN><NP>}
+"""
+c_parser = nltk.RegexpParser(c_gram)
+tree = c_parser.parse(pos)
+print("Tokens: ", tok)
+print("POS Tags: ", pos)
+tree.draw()
+
+Ex-9 a(I):
+
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+text1 = "I am John Wick"
+text2 = "I am from Paris"
+tfidf = TfidfVectorizer()
+tfidf_matrix = tfidf.fit_transform([text1, text2])
+tfidf_matrix_dense = tfidf_matrix.toarray()
+vector1 = tfidf_matrix_dense[0]
+vector2 = tfidf_matrix_dense[1]
+dot_product = np.dot(vector1, vector2)
+magnitude1 = np.linalg.norm(vector1)
+magnitude2 = np.linalg.norm(vector2)
+cosine_sim = dot_product / (magnitude1 * magnitude2)
+print("Cosine Similarity:", cosine_sim)
+
+
+EX 9 a(II):
+
+
+import nltk
+from sklearn.feature_extraction.text import TfidfVectorizer
+text1="I am John Wick"
+text2="I am from Paris"
+def jaccard_similarity(text1,text2):
+set1=set(text1.split())
+set2=set(text2.split())
+return len(set1.intersection(set2))/len(set1.union(set2))
+similarity=jaccard_similarity(text1,text2)
+print("Jaccard Similarity:",similarity)
+
+
+Ex 9 b:
+
+BERT PROGRAM
+
+import torch
+from transformers import AutoModel, AutoTokenizer
+import torch.nn.functional as F
+
+
+model_dir = "./bert-local"
+tokenizer = AutoTokenizer.from_pretrained(model_dir)
+model = AutoModel.from_pretrained(model_dir)
+
+def get_word_embedding(word):
+    inputs = tokenizer(word, return_tensors="pt")
+    with torch.no_grad():
+        outputs = model(**inputs)
+    cls_embedding = outputs.last_hidden_state[0][0]
+    return cls_embedding
+
+def cosine_similarity(vec1, vec2):
+    return F.cosine_similarity(vec1.unsqueeze(0), vec2.unsqueeze(0)).item()
+
+word1 = "king"
+word2 = "queen"
+
+embedding1 = get_word_embedding(word1)
+embedding2 = get_word_embedding(word2)
+similarity = cosine_similarity(embedding1, embedding2)
+
+print(f"Cosine similarity between '{word1}' and '{word2}': {similarity:.4f}")
+
+
+RoBERTa program
+
+import torch
+from transformers import AutoTokenizer, AutoModel
+import torch.nn.functional as F
+
+model_dir = "./roberta-local"
+tokenizer = AutoTokenizer.from_pretrained(model_dir)
+model = AutoModel.from_pretrained(model_dir)
+
+def get_word_embedding(word):
+    inputs = tokenizer(word, return_tensors="pt", add_special_tokens=True)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    return outputs.last_hidden_state[0][0]
+
+def cosine_similarity(vec1, vec2):
+    return F.cosine_similarity(vec1.unsqueeze(0), vec2.unsqueeze(0)).item()
+
+
+word1 = "king"
+word2 = "queen"
+
+
+embedding1 = get_word_embedding(word1)
+embedding2 = get_word_embedding(word2)
+
+
+similarity = cosine_similarity(embedding1, embedding2)
+
+print(f"Cosine similarity between '{word1}' and '{word2}': {similarity:.4f}")
+
+
+ 
+
+Ex 10:
+
+
+import nltk
+from nltk.wsd import lesk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import wordnet
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+nltk.download('punkt')
+sentence = "He sat on the bank of the river."
+word = "bank"
+best_sense = lesk(word_tokenize(sentence), word)
+if best_sense:
+print(f"Best sense for '{word}': {best_sense.definition()}")
+else:
+print("No suitable sense found.")
